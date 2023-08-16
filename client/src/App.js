@@ -3,7 +3,14 @@ import getTodosRequest from "./api/getTodosRequest";
 import { useQuery } from "react-query";
 
 function App() {
-  const { isLoading, data: todos } = useQuery("todos", getTodosRequest);
+  function useFetchData() {
+    return useQuery({
+      queryKey: ["todos"],
+      queryFn: () => getTodosRequest(),
+    });
+  }
+
+  const { isLoading, data: todos } = useFetchData();
 
   return (
     <div className="App">

@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, renderHook, waitFor } from "@testing-library/react";
 import App from "./App";
 import { QueryClient, QueryClientProvider } from "react-query";
-import getTodosRequest from "./api/getTodosRequest";
+import useFetchData from "../src/App";
+import nock from "nock";
 
 const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
@@ -21,19 +22,17 @@ test("renders Loading ... if no data is not fetched yet", () => {
 });
 
 test("renders todos when todos are fetched", async () => {
-  render(<App />, { wrapper: wrapper });
-
-  const expectation = nock("http://localhost:3000/todos")
-    .get(getTodosRequest)
+  const expectation = nock("http://localhost:3000")
+    .get(useFetchData)
     .reply(200, {
-      answer: 42,
+      text: "test todo",
     });
 
-  const { result, waitFor } = renderHook(() => useFetchData(), { wrapper });
+  const { result } = renderHook(() => useFetchData(), { wrapper });
 
   await waitFor(() => {
     return result.current.isSuccess;
   });
 
-  expect(result.current.data).toEqual({ answer: 42 });
+  expect(result.current.data).toEqual({ text: "test todo" });
 });
