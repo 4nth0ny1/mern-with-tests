@@ -22,6 +22,8 @@ test("renders Loading ... if no data is not fetched yet", () => {
 });
 
 test("renders todos when todos are fetched", async () => {
+  // https://tanstack.com/query/v4/docs/react/guides/testing
+
   const expectation = nock("http://localhost:3000")
     .get(useFetchData)
     .reply(200, {
