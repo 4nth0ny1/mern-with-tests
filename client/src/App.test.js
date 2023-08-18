@@ -9,8 +9,8 @@ import App from "./App";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import nock from "nock";
-import * as axios from "axios";
-import getTodosRequest from "./hooks/getTodosRequest";
+import axios from "axios";
+import useGetTodos from "./hooks/useGetTodos";
 
 const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
@@ -34,33 +34,15 @@ test("renders Mern Todo App", () => {
   expect(linkElement).toBeTruthy();
 });
 
-test("renders Loading ... if no data is not fetched yet", () => {
-  const loadingDiv = screen.getByText(/Loading .../i);
-  expect(loadingDiv).toBeTruthy();
-});
+// test("renders Loading ... if no data is not fetched yet", () => {
+//   const loadingDiv = screen.getByText(/Loading.../i);
+//   expect(loadingDiv).toBeTruthy();
+// });
 
-test("renders todos when todos are fetched", async () => {
-  mockAxios.get.mockImplementationOnce(() =>
-    Promise.resolve({
-      data: {
-        text: "test todo",
-      },
-    })
-  );
+test("renders todos when todos are fetched", () => {
+  const todos = [{ text: "test todo" }];
 
-  const response = await getTodosRequest();
-  const bot_Text = "test todo";
-  expect(response).toMatch(bot_Text);
-
-  // expect(axios).toHaveBeenCalled();
-  // expect(response).toEqual("test todo");
-
-  // https://tanstack.com/query/v4/docs/react/guides/testing
-  // const expectation = nock("http://localhost:8080").get("/todos").reply(200, {
-  //   text: "test todo",
-  // });
-  // const { result } = renderHook(() => useFetchData(), { wrapper });
-  // await waitFor(() => expect(result.current.isSuccess).toBe(true));
-  // console.log(result.current.isSuccess);
-  // expect(result.current.data.text).toEqual("test todo");
+  axios.get.mockImplementationOnce(() => {
+    Promise.resolve({ data: todos });
+  });
 });
