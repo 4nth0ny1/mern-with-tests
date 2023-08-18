@@ -39,10 +39,10 @@ test("renders Mern Todo App", () => {
 //   expect(loadingDiv).toBeTruthy();
 // });
 
-test("renders todos when todos are fetched", () => {
-  const todos = [{ text: "test todo" }];
+// test("renders todos when todos are fetched", () => {
+//   const todos = [{ text: "test todo" }];
 
-  axios.get.mockImplementationOnce(() => {
-    Promise.resolve({ data: todos });
-  });
-});
+//   axios.get.mockImplementationOnce(() => {
+//     Promise.resolve({ data: todos });
+//   });
+// });
