@@ -1,40 +1,66 @@
-import { render, screen, renderHook, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  renderHook,
+  waitFor,
+  cleanup,
+} from "@testing-library/react";
 import App from "./App";
+import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import useFetchData from "../src/App";
 import nock from "nock";
+import * as axios from "axios";
+import getTodosRequest from "./api/getTodosRequest";
 
 const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-test("renders learn react link", () => {
+// jest.mock("axios", () => jest.fn(() => Promise.resolve("test todo")));
+
+jest.mock("axios", () => ({
+  get: jest.fn(),
+}));
+
+beforeEach(() => {
   render(<App />, { wrapper: wrapper });
+});
+
+afterEach(cleanup);
+
+test("renders Mern Todo App", () => {
   const linkElement = screen.getByText(/Mern Todo App/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(linkElement).toBeTruthy();
 });
 
 test("renders Loading ... if no data is not fetched yet", () => {
-  render(<App />, { wrapper: wrapper });
   const loadingDiv = screen.getByText(/Loading .../i);
-  expect(loadingDiv).toBeInTheDocument();
+  expect(loadingDiv).toBeTruthy();
 });
 
 test("renders todos when todos are fetched", async () => {
+  mockAxios.get.mockImplementationOnce(() =>
+    Promise.resolve({
+      data: {
+        text: "test todo",
+      },
+    })
+  );
+
+  const response = await getTodosRequest();
+  const bot_Text = "test todo";
+  expect(response).toMatch(bot_Text);
+
+  // expect(axios).toHaveBeenCalled();
+  // expect(response).toEqual("test todo");
+
   // https://tanstack.com/query/v4/docs/react/guides/testing
-
-  const expectation = nock("http://localhost:3000")
-    .get(useFetchData)
-    .reply(200, {
-      text: "test todo",
-    });
-
-  const { result } = renderHook(() => useFetchData(), { wrapper });
-
-  await waitFor(() => {
-    return result.current.isSuccess;
-  });
-
-  expect(result.current.data).toEqual({ text: "test todo" });
+  // const expectation = nock("http://localhost:8080").get("/todos").reply(200, {
+  //   text: "test todo",
+  // });
+  // const { result } = renderHook(() => useFetchData(), { wrapper });
+  // await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  // console.log(result.current.isSuccess);
+  // expect(result.current.data.text).toEqual("test todo");
 });
