@@ -10,7 +10,7 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import nock from "nock";
 import * as axios from "axios";
-import getTodosRequest from "./api/getTodosRequest";
+import getTodosRequest from "./hooks/getTodosRequest";
 
 const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
